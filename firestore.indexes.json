@@ -1,0 +1,21 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "trafficReports",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "congestionLevel", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "favoriteRoutes",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "ownerUid", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

@@ -1,0 +1,101 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isAuthenticated() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.admin == true ||
+        request.auth.token.email.matches('.*admin.*')
+      );
+    }
+
+    function isValidCoordinates(lat, lng) {
+      return lat is number && lat >= -90.0 && lat <= 90.0 &&
+             lng is number && lng >= -180.0 && lng <= 180.0;
+    }
+
+    function isValidCongestionLevel(level) {
+      return level in ['low', 'moderate', 'heavy'];
+    }
+
+    function isValidIncidentType(type) {
+      return type in ['congestion', 'roadwork', 'accident', 'road_closure', 'other'];
+    }
+
+    // 1. Traffic Reports Collection
+    // - Publicly readable for commuters and map visualization
+    // - Authenticated users can create reports for themselves
+    // - Report owner cannot be altered once created
+    // - Only admins can modify review status or delete arbitrary reports
+    match /trafficReports/{reportId} {
+      allow read: if true;
+
+      allow create: if isAuthenticated() &&
+        request.resource.data.ownerUid == request.auth.uid &&
+        request.resource.data.roadName is string &&
+        request.resource.data.roadName.size() >= 2 &&
+        isValidCoordinates(request.resource.data.latitude, request.resource.data.longitude) &&
+        isValidCongestionLevel(request.resource.data.congestionLevel) &&
+        isValidIncidentType(request.resource.data.incidentType) &&
+        request.resource.data.reviewed == false;
+
+      allow update: if isAuthenticated() && (
+        isAdmin() ||
+        (
+          resource.data.ownerUid == request.auth.uid &&
+          request.resource.data.ownerUid == resource.data.ownerUid &&
+          request.resource.data.reviewed == resource.data.reviewed
+        )
+      );
+
+      allow delete: if isAuthenticated() && (
+        isAdmin() ||
+        resource.data.ownerUid == request.auth.uid
+      );
+    }
+
+    // 2. Favorite Routes Collection
+    // - Strictly private to the user who created it
+    match /favoriteRoutes/{routeId} {
+      allow read, delete: if isAuthenticated() && resource.data.ownerUid == request.auth.uid;
+
+      allow create: if isAuthenticated() &&
+        request.resource.data.ownerUid == request.auth.uid &&
+        request.resource.data.name is string &&
+        isValidCoordinates(request.resource.data.origin.latitude, request.resource.data.origin.longitude) &&
+        isValidCoordinates(request.resource.data.destination.latitude, request.resource.data.destination.longitude);
+
+      allow update: if isAuthenticated() &&
+        resource.data.ownerUid == request.auth.uid &&
+        request.resource.data.ownerUid == request.auth.uid;
+    }
+
+    // 3. User Profiles Collection
+    // - Users can read and write only their own profile
+    // - Role cannot be escalated by ordinary user
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+
+      allow create, update: if isAuthenticated() && request.auth.uid == userId && (
+        !('role' in request.resource.data) ||
+        request.resource.data.role == resource.data.role ||
+        isAdmin()
+      );
+    }
+
+    // 4. App Config (Public non-secret metadata)
+    match /appConfig/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+  }
+}

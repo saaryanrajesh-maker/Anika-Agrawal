@@ -1,0 +1,811 @@
+# PROJECT: Smart Traffic Congestion Detection and Alternative Route Recommendation System
+
+Act as a senior full-stack software engineer, UI/UX designer, Firebase architect, and deployment engineer.
+
+Build a complete, functional, responsive, full-stack web application called:
+
+**Smart Traffic — Traffic Congestion Detection and Alternative Route Recommendation System**
+
+This project is for a Semester V college IDEAL Lab project under the theme of Urban Mobility and Sustainable Cities.
+
+The application should solve urban transportation problems by helping users monitor road congestion, report traffic conditions, compare routes, and discover alternative travel routes.
+
+IMPORTANT: Do not create only a static UI or a frontend mockup. Build a working application with real navigation, functional forms, Firebase integration, interactive maps, route calculations, error handling, and deployment configuration.
+
+Do not leave buttons nonfunctional or use fake API responses while claiming they are live.
+
+==================================================
+1. TECHNOLOGY STACK
+==================================================
+
+Use the following technologies:
+
+Frontend:
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- React Router
+- Lucide React icons
+- Recharts for charts
+
+Maps:
+- Leaflet
+- React Leaflet
+- OpenStreetMap map tiles
+
+Routing:
+- OSRM public routing service for road-route calculation, with a configurable routing provider so it can be replaced later.
+
+Backend and database:
+- Firebase Authentication
+- Cloud Firestore
+- Firebase client SDK
+
+Deployment:
+- Vercel
+
+Development environment:
+- Google AI Studio
+
+Use npm as the package manager.
+
+Use current stable, mutually compatible package versions.
+
+The application must be deployable to Vercel without requiring a traditional always-running backend server.
+
+Do not use SQLite, MongoDB, MySQL, or another database.
+
+Firebase Cloud Firestore must be the primary persistent database.
+
+==================================================
+2. APPLICATION PURPOSE
+==================================================
+
+The system helps commuters understand traffic conditions in urban areas and compare alternative routes.
+
+Users should be able to:
+
+1. View an interactive city map.
+2. Explore reported road congestion.
+3. Search for a starting location and destination.
+4. Calculate alternative driving routes.
+5. Compare route distances and estimated travel times.
+6. Submit traffic-condition reports.
+7. View recent traffic reports.
+8. Identify roads reported as congested.
+9. Save favorite routes when logged in.
+10. View statistics and charts about reported congestion.
+
+The default demonstration region should be Mira-Bhayandar, Maharashtra, India.
+
+Allow users to search for other locations as well.
+
+==================================================
+3. DESIGN AND USER EXPERIENCE
+==================================================
+
+Create a professional smart-city dashboard.
+
+Design requirements:
+- Modern, clean, polished interface.
+- Responsive layout for desktop, tablet, and mobile.
+- Light theme with a dark sidebar or dark navigation accents.
+- White cards, subtle shadows, rounded corners, and consistent spacing.
+- Traffic status colors:
+  Green = Low congestion.
+  Yellow = Moderate congestion.
+  Red = Heavy congestion.
+- Accessible typography and adequate color contrast.
+- Loading skeletons and progress indicators.
+- Clear success and error notifications.
+- Empty states for pages without data.
+- Confirmation dialogs for destructive actions.
+- Mobile-friendly navigation.
+
+Use a coherent design system throughout the application.
+
+Do not make the interface look like a basic unstyled college assignment.
+
+Create reusable components and maintain a consistent layout.
+
+==================================================
+4. APPLICATION PAGES
+==================================================
+
+Create the following pages.
+
+A. LANDING PAGE
+
+Include:
+- Project name and logo.
+- Navigation links.
+- Hero section explaining the solution.
+- Call-to-action buttons.
+- Feature cards.
+- How-it-works section.
+- Traffic status legend.
+- Benefits for commuters and urban planning.
+- Footer with project information.
+
+Buttons must navigate to real application pages.
+
+B. DASHBOARD
+
+Create a dashboard containing:
+- Total traffic reports.
+- Heavy congestion reports.
+- Moderate congestion reports.
+- Low congestion reports.
+- Recent traffic reports.
+- Traffic distribution chart.
+- Congestion trend chart, when sufficient historical data exists.
+- Interactive map showing reported traffic locations.
+- Recent report activity.
+
+All dashboard metrics should be calculated from actual Firestore data when Firebase is configured.
+
+If the database is empty, show an informative empty state or clearly labeled demonstration data.
+
+Never present demonstration data as verified live traffic information.
+
+C. LIVE TRAFFIC MAP
+
+Create an interactive Leaflet map.
+
+Requirements:
+- Default map center: Mira-Bhayandar.
+- Zoom controls.
+- Marker clusters if practical.
+- Road-report markers.
+- Marker colors based on reported congestion.
+- Popups containing road name, severity, report time, and source.
+- A filter for low, moderate, and heavy congestion.
+- A button to center the map on the default city.
+- A search option for locations.
+- A legend explaining traffic colors.
+
+Use OpenStreetMap tiles with proper attribution.
+
+Allow users to select a location on the map when creating a traffic report.
+
+Use real geocoding only through a properly configured geocoding service. Follow the service's usage policy and do not send excessive requests.
+
+D. ROUTE PLANNER
+
+Build a functional route planner.
+
+Input fields:
+- Starting location.
+- Destination.
+- Travel mode.
+- Optional accessibility or travel preferences.
+
+For the initial version, support driving routes through the OSRM routing service.
+
+Implement location search using a suitable geocoding provider such as Nominatim, with appropriate attribution, request limits, and error handling.
+
+Route calculation:
+1. Geocode the starting point.
+2. Geocode the destination.
+3. Request alternative routes when supported by the routing provider.
+4. Display the routes on the map.
+5. Show each route's distance.
+6. Show estimated travel duration returned by the routing service.
+7. Allow users to select and compare available routes.
+8. Highlight the selected route.
+9. Show route information in a comparison panel.
+
+For every route, display:
+- Route name or alternative number.
+- Distance in kilometers.
+- Estimated duration.
+- Available congestion-report count along the route.
+- Number of heavy-congestion reports near the route.
+- A congestion score derived from the available report data.
+
+Implement a clearly explained recommendation algorithm.
+
+Suggested algorithm:
+- Start with the route duration supplied by the routing provider.
+- Associate nearby traffic reports with each route using geographic proximity.
+- Calculate a congestion score from nearby reports.
+- Rank routes using a combination of estimated duration and reported congestion.
+- Make the weighting configurable.
+
+Do not claim that OSRM provides real-time traffic information.
+
+Do not arbitrarily modify routing-provider travel times and present them as actual live traffic times.
+
+If no traffic reports are available near a route, show "Insufficient traffic data" instead of claiming the route is clear.
+
+If the routing service fails, display a useful error message and provide a retry option.
+
+E. REPORT TRAFFIC
+
+Create a traffic-report submission form.
+
+Fields:
+- Road name.
+- Location.
+- Latitude and longitude, selected using the map or geocoding.
+- Congestion level: Low, Moderate, Heavy.
+- Incident type: Congestion, Roadwork, Accident, Road Closure, Other.
+- Optional description.
+- Optional estimated delay.
+- Report timestamp.
+
+Validation:
+- Require the road name.
+- Require a valid location.
+- Require a congestion level.
+- Validate all user inputs.
+- Display validation errors beside the relevant fields.
+- Prevent duplicate submissions caused by repeated button clicks.
+
+Signed-in users should be able to submit reports to Firestore.
+
+Store the authenticated user's UID as the report owner.
+
+Include report source and creation timestamp.
+
+Do not permit the client to assign arbitrary ownership to another user.
+
+Do not label a report as verified unless a real verification process exists.
+
+F. TRAFFIC REPORTS
+
+Display traffic reports in a searchable and filterable table or card list.
+
+Include:
+- Road name.
+- Congestion level.
+- Incident type.
+- Location.
+- Report time.
+- Report source.
+- Description.
+- Report status, if implemented.
+
+Add:
+- Search by road name.
+- Filter by severity.
+- Filter by incident type.
+- Sort by newest.
+- Pagination or incremental loading.
+- Report details view.
+
+Clearly distinguish user-submitted reports from demonstration data.
+
+G. AUTHENTICATION
+
+Use Firebase Authentication.
+
+Implement:
+- Email and password registration.
+- Login.
+- Logout.
+- Password reset.
+- Persistent authentication state.
+- Protected routes.
+- User profile page.
+
+Show a clear message if Firebase is not configured.
+
+Do not create fake authentication.
+
+Never store passwords directly in Firestore or browser storage.
+
+H. FAVORITE ROUTES
+
+Allow authenticated users to save favorite routes.
+
+Store:
+- User UID.
+- Route name.
+- Starting location.
+- Destination.
+- Coordinates.
+- Creation timestamp.
+
+Users should be able to:
+- Save a route.
+- View saved routes.
+- Reopen a saved route in the route planner.
+- Remove a saved route.
+
+Users must only be able to access their own saved routes.
+
+I. ADMINISTRATION
+
+Implement a basic role-based administration area.
+
+Requirements:
+- Administrators can review user-submitted reports.
+- Administrators can mark reports as reviewed.
+- Administrators can remove inappropriate or duplicate reports.
+- Administrators can inspect aggregate traffic-report statistics.
+
+IMPORTANT SECURITY REQUIREMENT:
+
+Do not allow users to become administrators by changing a frontend variable, editing local storage, modifying their profile, or changing a Firestore document they control.
+
+Use trusted Firebase Authentication custom claims or another secure, server-verified authorization mechanism.
+
+If privileged server functionality is needed, use Firebase Cloud Functions with appropriate authorization and configuration.
+
+Provide clear instructions for assigning the administrator role securely.
+
+If administrator provisioning has not been configured, explain this and deny administrative access by default.
+
+==================================================
+5. FIREBASE CONFIGURATION
+==================================================
+
+Use Firebase Authentication and Cloud Firestore.
+
+Create a clean Firebase configuration module.
+
+Use these environment variables:
+
+VITE_FIREBASE_API_KEY
+VITE_FIREBASE_AUTH_DOMAIN
+VITE_FIREBASE_PROJECT_ID
+VITE_FIREBASE_STORAGE_BUCKET
+VITE_FIREBASE_MESSAGING_SENDER_ID
+VITE_FIREBASE_APP_ID
+
+Read configuration from environment variables rather than hardcoding real project credentials.
+
+Provide:
+- src/lib/firebase.ts
+- src/lib/auth.ts
+- src/lib/firestore.ts
+- src/types/index.ts
+- A complete .env.example file.
+
+If required environment variables are missing:
+- Do not crash the entire application.
+- Display a clear setup notice.
+- Allow explicitly labeled demo mode where appropriate.
+- Do not silently pretend that Firebase writes or authentication succeeded.
+
+Use Firestore server timestamps for creation and update times.
+
+Use appropriate database queries and indexes.
+
+Handle loading states, permission errors, unavailable services, and failed writes.
+
+Avoid unnecessary Firestore reads and writes.
+
+==================================================
+6. FIRESTORE DATA MODEL
+==================================================
+
+Create these collections.
+
+A. trafficReports
+
+Example document:
+
+{
+  roadName: "Mira Road Station Road",
+  locationName: "Mira Road, Maharashtra",
+  latitude: 19.XXXX,
+  longitude: 72.XXXX,
+  congestionLevel: "heavy",
+  incidentType: "congestion",
+  description: "Traffic moving slowly",
+  estimatedDelayMinutes: 10,
+  source: "user_report",
+  ownerUid: "authenticated-user-uid",
+  reviewed: false,
+  createdAt: "Firestore server timestamp",
+  updatedAt: "Firestore server timestamp"
+}
+
+Use valid numeric coordinates in actual records.
+
+Do not use the illustrative coordinate placeholders above in working seed data.
+
+B. users
+
+Example:
+
+{
+  displayName: "Demo User",
+  email: "user@example.com",
+  createdAt: "Firestore server timestamp"
+}
+
+Never store passwords or sensitive authentication credentials.
+
+Users must not be able to grant themselves administrative privileges by modifying their user document.
+
+C. favoriteRoutes
+
+Example:
+
+{
+  ownerUid: "authenticated-user-uid",
+  name: "Home to College",
+  origin: {
+    name: "Starting location",
+    latitude: 19.0,
+    longitude: 72.0
+  },
+  destination: {
+    name: "Destination",
+    latitude: 19.1,
+    longitude: 72.1
+  },
+  createdAt: "Firestore server timestamp"
+}
+
+Use appropriate coordinate validation and user ownership checks.
+
+D. appConfig
+
+Use only for non-secret public application settings.
+
+Do not store API secrets or privileged credentials in public documents.
+
+==================================================
+7. FIRESTORE SECURITY RULES
+==================================================
+
+Generate a complete firestore.rules file.
+
+Security requirements:
+- Unauthenticated users cannot create or modify traffic reports.
+- Authenticated users can create reports only for themselves.
+- Users cannot change the owner UID of an existing report.
+- Ordinary users cannot arbitrarily modify reviewed or administrator-controlled fields.
+- Users can only read, update, and delete their own favorite routes.
+- User profiles must be restricted to safe, approved fields.
+- Users cannot grant themselves privileged roles.
+- Administrative operations must require trusted authorization.
+- Validate field types, allowed enum values, required fields, and coordinate ranges.
+- Public read access to traffic reports may be enabled if appropriate for the application's purpose.
+- Protect any private information from public queries.
+
+Ensure the security rules are consistent with the actual data model and application operations.
+
+Do not use insecure development rules such as:
+
+allow read, write: if true;
+
+Do not leave Firestore in unrestricted test mode.
+
+Include instructions for testing the rules using the Firebase Emulator Suite if practical.
+
+==================================================
+8. TRAFFIC CONGESTION DETECTION
+==================================================
+
+Implement a basic, understandable congestion classification algorithm.
+
+Use reported traffic information to classify roads as:
+- Low.
+- Moderate.
+- Heavy.
+- Unknown or insufficient data.
+
+Use the following rules for user-submitted reports:
+- Use the reported congestion level as the initial observation.
+- Display when the report was submitted.
+- Identify stale reports based on their age.
+- Avoid treating old reports as current traffic conditions.
+- If several reports exist for the same road, show the number of reports and a clearly explained summary.
+- Where appropriate, give more weight to recent reports.
+- Distinguish individual reports from aggregate classifications.
+
+Clearly state that this is a prototype and that user-submitted reports are not equivalent to an official live traffic feed.
+
+Do not invent traffic sensor readings.
+
+Keep the classification logic in a reusable module with unit tests.
+
+==================================================
+9. ALTERNATIVE ROUTE RECOMMENDATION
+==================================================
+
+Implement an explainable route ranking algorithm.
+
+Inputs:
+- Route duration from the routing service.
+- Route distance.
+- Nearby user-submitted traffic reports.
+- Age of reports.
+- Congestion severity.
+- Optional user preferences.
+
+Output:
+- Ranked alternative routes.
+- Estimated duration.
+- Distance.
+- Congestion score.
+- Data-confidence label.
+- Explanation of why a route is recommended.
+
+Example explanation:
+
+"Route 2 is recommended because its estimated route duration is shorter and fewer recent heavy-congestion reports were found nearby."
+
+Only show this explanation when supported by the calculated data.
+
+When evidence is insufficient, say so.
+
+Do not claim that a route is guaranteed to be faster.
+
+Do not present a congestion-based time adjustment as a verified real-world prediction.
+
+Write unit tests for route scoring and recommendation logic.
+
+==================================================
+10. MAP AND EXTERNAL SERVICES
+==================================================
+
+Use OpenStreetMap for map visualization.
+
+Use OSRM for driving route calculations.
+
+Use a suitable geocoding service for searching locations.
+
+Requirements:
+- Follow the terms and usage policies of all external services.
+- Add map and data attribution.
+- Handle rate limits.
+- Handle network failures.
+- Avoid sending API requests on every keystroke without throttling or debouncing.
+- Use request timeouts where appropriate.
+- Do not expose secret credentials in frontend code.
+- Make service endpoints configurable when practical.
+- Keep the routing and geocoding logic behind reusable service modules.
+
+IMPORTANT:
+OpenStreetMap tiles and OSRM routing do not automatically provide real-time traffic congestion data.
+
+The core prototype must work with user-submitted reports and clearly labeled sample data.
+
+Design a clean interface so an authorized real-time traffic API can be added later without rewriting the application.
+
+==================================================
+11. DEMONSTRATION MODE
+==================================================
+
+Create a safe demonstration mode for college presentations.
+
+Requirements:
+- Include a small set of clearly labeled sample traffic reports.
+- Use valid coordinates within the Mira-Bhayandar region.
+- Mark sample records as demonstration data.
+- Never represent sample records as live traffic reports.
+- Do not insert sample records into a production database automatically.
+- Provide a separate seed script or documented manual process for populating demo data.
+- Show a visible "Demo Data" badge whenever demonstration records are displayed.
+- Ensure dashboard statistics distinguish demo records from actual user reports.
+
+The project must still demonstrate its main UI when Firebase is not configured.
+
+However, all write operations in demo mode must be clearly simulated and must not claim to persist to Firebase.
+
+==================================================
+12. APPLICATION SECURITY
+==================================================
+
+Follow security best practices.
+
+- Validate user input on the client and enforce security in Firebase rules or trusted backend code.
+- Protect private user data.
+- Restrict database queries to authorized records where required.
+- Prevent users from modifying administrator-only fields.
+- Avoid dangerously rendering user-submitted HTML.
+- Do not place service-account keys in frontend code.
+- Do not commit .env files containing credentials.
+- Add .env.example with placeholder values.
+- Add a .gitignore.
+- Implement safe error messages.
+- Do not expose internal stack traces to users.
+- Ensure production build settings are appropriate.
+
+Remember: Firebase client configuration is not an authorization mechanism. Firestore security rules and trusted backend authorization must enforce access control.
+
+==================================================
+13. VERCEL DEPLOYMENT
+==================================================
+
+Prepare the project for deployment on Vercel.
+
+Include:
+- package.json.
+- Vite configuration.
+- TypeScript configuration.
+- Tailwind configuration appropriate to the selected version.
+- vercel.json if needed.
+- SPA routing fallback configuration.
+- .gitignore.
+- .env.example.
+- README.md.
+
+Use a standard Vite production build.
+
+Ensure the application builds with:
+
+npm install
+npm run dev
+npm run build
+
+If useful, include:
+npm run preview
+
+Do not require a persistent Node.js server in production.
+
+All frontend environment variables should use the VITE_ prefix.
+
+Explain how to:
+1. Create a Firebase project.
+2. Enable Email/Password authentication.
+3. Create a Cloud Firestore database.
+4. Register a web application in Firebase.
+5. Copy Firebase configuration into a local .env file.
+6. Deploy Firestore security rules.
+7. Run the application locally.
+8. Push the code to GitHub.
+9. Import the repository into Vercel.
+10. Add environment variables in Vercel.
+11. Deploy the application.
+12. Add the deployed domain to Firebase Authentication's authorized domains when required.
+13. Verify that authentication, Firestore operations, map rendering, and route calculations work in production.
+
+Include troubleshooting instructions for:
+- Firebase configuration errors.
+- Authentication domain errors.
+- Firestore permission errors.
+- Missing environment variables.
+- Vercel 404 errors on nested routes.
+- Routing API failures.
+- Geocoding rate limits.
+
+==================================================
+14. PROJECT STRUCTURE
+==================================================
+
+Organize the code professionally.
+
+Suggested structure:
+
+smart-traffic/
+  public/
+  src/
+    components/
+      layout/
+      dashboard/
+      map/
+      routes/
+      reports/
+      ui/
+    pages/
+      LandingPage.tsx
+      DashboardPage.tsx
+      TrafficMapPage.tsx
+      RoutePlannerPage.tsx
+      ReportsPage.tsx
+      LoginPage.tsx
+      RegisterPage.tsx
+      ProfilePage.tsx
+      FavoritesPage.tsx
+      AdminPage.tsx
+      NotFoundPage.tsx
+    context/
+      AuthContext.tsx
+    hooks/
+    lib/
+      firebase.ts
+      auth.ts
+      firestore.ts
+      utils.ts
+    services/
+      geocodingService.ts
+      routingService.ts
+      trafficService.ts
+    types/
+      index.ts
+    utils/
+      congestion.ts
+      routeScoring.ts
+    App.tsx
+    main.tsx
+    index.css
+  tests/
+  firestore.rules
+  firestore.indexes.json
+  .env.example
+  .gitignore
+  index.html
+  package.json
+  README.md
+  vercel.json
+
+You may adjust the structure if needed, but maintain clear separation of UI, data access, external services, and business logic.
+
+==================================================
+15. CODE QUALITY
+==================================================
+
+Requirements:
+- Use TypeScript types instead of unnecessary any.
+- Create reusable React components.
+- Keep components reasonably small.
+- Use React hooks correctly.
+- Avoid duplicated business logic.
+- Handle loading, error, and empty states.
+- Include input validation.
+- Avoid hardcoded secrets.
+- Include unit tests for core congestion classification and route scoring.
+- Include useful comments for non-obvious logic.
+- Avoid broken imports.
+- Ensure all routes resolve correctly.
+- Ensure the production build succeeds.
+- Keep the application usable on small screens.
+
+Do not merely provide a plan or a tutorial.
+
+Generate the actual application source files.
+
+==================================================
+16. REQUIRED DELIVERABLES
+==================================================
+
+Produce a complete working project containing:
+
+1. All frontend source files.
+2. Firebase configuration and integration.
+3. Firestore data access functions.
+4. Firebase Authentication implementation.
+5. Firestore security rules.
+6. Database indexes where required.
+7. Interactive map.
+8. Functional route planner.
+9. Alternative route comparison.
+10. Traffic-report submission and browsing.
+11. Dashboard charts and statistics.
+12. Favorite routes.
+13. Basic secure administration structure.
+14. Demo data and a seeding process.
+15. Unit tests for core algorithms.
+16. .env.example.
+17. Vercel deployment configuration.
+18. Complete README.md.
+19. Firebase setup instructions.
+20. Vercel deployment instructions.
+
+==================================================
+17. FINAL VALIDATION
+==================================================
+
+Before considering the project complete:
+
+- Check imports and dependencies.
+- Check TypeScript errors.
+- Run the production build if the environment allows it.
+- Fix build failures.
+- Verify all navigation links.
+- Verify that forms validate input.
+- Verify authentication state handling.
+- Verify Firestore security assumptions.
+- Verify that route planning handles failed API requests.
+- Verify that map markers and route lines render.
+- Verify that demo data is labeled correctly.
+- Verify that the application does not falsely claim to provide live traffic.
+- Verify that Vercel deployment instructions match the generated configuration.
+
+If you cannot run commands or test the application, clearly disclose that limitation.
+
+Do not claim tests passed unless they were actually executed successfully.
+
+Start by generating the complete application files, not merely explaining how you would build them.
+
+If output limits prevent generating every file in one response, create the project in coherent stages and continue until all required files are complete. Maintain consistent imports, types, interfaces, and package versions across every stage.
+
+The final result must be a professional, demonstrable, full-stack college project that can be configured with Firebase and deployed on Vercel.

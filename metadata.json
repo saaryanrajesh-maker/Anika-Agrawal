@@ -1,0 +1,6 @@
+{
+  "name": "Smart Traffic — Congestion Detection & Route Recommendation",
+  "description": "Smart Traffic Congestion Detection and Alternative Route Recommendation System for urban mobility and sustainable cities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
